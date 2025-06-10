@@ -5,6 +5,8 @@ import com.noahnikollbibaj.explain_my_code_app_backend.entities.ExplanationRespo
 import com.noahnikollbibaj.explain_my_code_app_backend.entities.LangaugeDetectRequest;
 import com.noahnikollbibaj.explain_my_code_app_backend.service.OllamaService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -14,6 +16,17 @@ public class ExplanationController {
 
     private final OllamaService ollamaService;
 
+    @GetMapping("/status")
+    public ResponseEntity<String> checkStatus() {
+        boolean status = ollamaService.isOllamaAvailable();
+
+        if (status) {
+            return ResponseEntity.ok("aktiv");
+        } else {
+            return ResponseEntity.ok("inaktiv");
+        }
+    }
+
     @PostMapping("/explain")
     public ExplanationResponse explain(@RequestBody ExplanationRequest explanationRequest) {
         String result = ollamaService.generateExplanation(explanationRequest.getPrompt(), false,
@@ -22,8 +35,8 @@ public class ExplanationController {
     }
 
     @PostMapping("/detect-language")
-    public ExplanationResponse explain(@RequestBody LangaugeDetectRequest lanugageDetectRequest) {
-        String result = ollamaService.detectLanguage(lanugageDetectRequest.getPrompt());
+    public ExplanationResponse explain(@RequestBody LangaugeDetectRequest langaugeDetectRequest) {
+        String result = ollamaService.detectLanguage(langaugeDetectRequest.getPrompt());
         return new ExplanationResponse(result);
     }
 }

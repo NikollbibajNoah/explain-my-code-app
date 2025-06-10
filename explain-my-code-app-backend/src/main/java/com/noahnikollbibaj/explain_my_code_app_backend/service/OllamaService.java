@@ -5,12 +5,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import org.springframework.http.*;
+
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
 @Service
 public class OllamaService implements IOllamaService {
-    private final String OLLAMA_URL = "http://localhost:11434/api/generate";
+
+    private final String OLLAMA_BASE_URL = "http://localhost:11434";
+    private final String OLLAMA_ENDPOINT =  OLLAMA_BASE_URL + "/api/generate";
 
     @Override
     public String generateExplanation(String code, boolean stream, String model) {
@@ -31,7 +37,7 @@ public class OllamaService implements IOllamaService {
         HttpEntity<Map<String, Object>> request = new HttpEntity<>(requestBody, headers);
 
         // Send POST request to Ollama API
-        ResponseEntity<Map> response = restTemplate.postForEntity(OLLAMA_URL, request, Map.class);
+        ResponseEntity<Map> response = restTemplate.postForEntity(OLLAMA_ENDPOINT, request, Map.class);
 
         if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
             return (String) response.getBody().get("response");
@@ -56,7 +62,7 @@ public class OllamaService implements IOllamaService {
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<Map<String, Object>> request = new HttpEntity<>(requestBody, headers);
-        ResponseEntity<Map> response = restTemplate.postForEntity(OLLAMA_URL, request, Map.class);
+        ResponseEntity<Map> response = restTemplate.postForEntity(OLLAMA_ENDPOINT, request, Map.class);
 
         if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
             String raw = (String) response.getBody().get("response");
@@ -64,5 +70,21 @@ public class OllamaService implements IOllamaService {
         }
 
         return "Unbekannt";
+    }
+
+    @Override
+    public boolean isOllamaAvailable() {
+        try {
+            HttpURLConnection connection = (HttpURLConnection) new URL(OLLAMA_BASE_URL).openConnection();
+            connection.setConnectTimeout(1000);
+            connection.setReadTimeout(1000);
+            connection.setRequestMethod("GET");
+
+            int responseCode = connection.getResponseCode();
+
+            return responseCode == 200;
+        } catch (IOException e) {
+            return false;
+        }
     }
 }
