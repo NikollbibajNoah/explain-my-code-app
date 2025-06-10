@@ -1,34 +1,47 @@
-import { CircleFadingArrowUp, WandSparkles } from "lucide-react";
-import { useEffect, useState } from "react";
-import { Button } from "./UI";
+import {
+  AlertCircleIcon,
+  CircleFadingArrowUp,
+  WandSparkles,
+} from "lucide-react";
+import { useState } from "react";
+import { Button, TextArea } from "./UI";
 
 export interface InputSectionProps {
   onAnalyze: (code: string) => void;
   isLoading: boolean;
+  status: boolean;
 }
 
 export const InputSection: React.FC<InputSectionProps> = ({
   onAnalyze,
   isLoading,
+  status,
 }) => {
-  const [isDisabled, setIsDisabled] = useState<boolean>(false);
   const [code, setCode] = useState<string>("");
-
-  useEffect(() => {
-    // Disable the input when loading
-    setIsDisabled(isLoading);
-  }, [isLoading]);
-
-  useEffect(() => {
-    if (code.trim() === "") {
-      setIsDisabled(true);
-    } else {
-      setIsDisabled(false);
-    }
-  }, [code]);
+  const [isGenerating, setIsGenerating] = useState<boolean>(false);
 
   const handleCodeChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setCode(event.target.value);
+  };
+
+  const getTextAreaAvailability = () => {
+    if (isLoading) {
+      return true; // Disable the textarea when loading
+    }
+    if (status) {
+      return true; // Disable the textarea when service is unavailable
+    }
+    return false; // Enable the textarea otherwise
+  };
+
+  const getButtonAvailability = () => {
+    if (isLoading) {
+      return true; // Disable the button when loading
+    }
+    if (code.trim() === "") {
+      return true; // Disable the button when code is empty
+    }
+    return false; // Enable the button otherwise
   };
 
   return (
@@ -46,19 +59,14 @@ export const InputSection: React.FC<InputSectionProps> = ({
         </div>
       </div>
 
-      <div className={`${isLoading ? "opacity-30" : "opacity-100"}`}>
+      <section>
         {/* User Input */}
-        <div className="flex w-full flex-wrap items-end gap-4 px-4 py-3">
-          <label className="flex flex-col min-w-40 flex-1">
-            <textarea
-              disabled={isLoading}
-              placeholder="Paste your code here..."
-              className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-white focus:outline-0 focus:ring-0 border border-[#2f396a] bg-[#181d35] focus:border-[#2f396a] min-h-36 placeholder:text-[#8e99cc] p-[15px] text-base font-normal leading-normal"
-              value={code}
-              onChange={handleCodeChange}
-            />
-          </label>
-        </div>
+        <TextArea
+          isDisabled={getTextAreaAvailability()}
+          isGenerating={isGenerating}
+          content={code}
+          handleCodeChange={handleCodeChange}
+        />
 
         {/* Analyze Button */}
         <div className="flex items-center gap-2 px-4 py-3 justify-end">
@@ -70,14 +78,30 @@ export const InputSection: React.FC<InputSectionProps> = ({
             onClick={() => {
               if (!isLoading) {
                 onAnalyze(code);
+                setIsGenerating(true);
               }
             }}
-            disabled={isDisabled}
+            disabled={getButtonAvailability()}
           >
             <WandSparkles />
           </Button>
         </div>
-      </div>
+      </section>
+      {status && (
+        <>
+          <section className="px-5 flex flex-col gap-3">
+            <div className="flex items-center gap-2 text-red-500 ">
+              <AlertCircleIcon />
+              <p className="text-sm font-normal">
+                The AI service is currently unavailable. Please try again later.
+              </p>
+            </div>
+            <div className="text-gray-500">
+              <small>AI features only works with Ollama. Check readme for Ollama configuration</small>
+            </div>
+          </section>
+        </>
+      )}
     </>
   );
 };

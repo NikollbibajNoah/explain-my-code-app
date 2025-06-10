@@ -5,5 +5,5 @@ export interface MainContentProps {
 }
 
 export const MainContent: React.FC<MainContentProps> = ({ children }) => {
-  return <main className="flex-1 overflow-y-auto">{children}</main>;
+  return <main className="flex-1 overflow-y-auto h-full">{children}</main>;
 };

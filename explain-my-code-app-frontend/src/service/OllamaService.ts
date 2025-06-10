@@ -42,3 +42,22 @@ export const generateExplanation = async (
     throw new Error("Failed to generate explanation");
   }
 };
+
+export const checkOllamaStatus = async () => {
+  try {
+    const response = await axiosInstance.get("/status");
+    
+    const status = response.data;
+
+    if (status === "aktiv") {
+      return false;
+    }
+    else if (status === "inaktiv") {
+      return true;
+    }
+  } catch (error) {
+    console.error("Error checking Ollama status:", error);
+    throw new Error("Failed to check Ollama status");
+    return false;
+  }
+}

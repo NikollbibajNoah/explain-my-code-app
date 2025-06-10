@@ -1,12 +1,27 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { InputSection, OutputSection } from "../components";
 import { generateExplanation } from "../service";
-import { detectLanguage } from "../service/OllamaService";
+import { checkOllamaStatus, detectLanguage } from "../service/OllamaService";
 
 export const ExplainPage = () => {
   const [language, setLanguage] = useState<string | undefined>(undefined);
   const [output, setOutput] = useState<string | undefined>(undefined);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [serviceAvailable, setServiceAvailable] = useState<boolean>(true);
+
+  const checkService = async () => {
+    const res = await checkOllamaStatus();
+
+    console.log(res);
+
+    if (res) {
+      setServiceAvailable(res);
+    }
+  };
+
+  useEffect(() => {
+    checkService();
+  }, []);
 
   const explain = async (code: string) => {
     const explanation = await generateExplanation(code, false, "phi3");
@@ -44,7 +59,11 @@ export const ExplainPage = () => {
   return (
     <div className="px-40 flex justify-center py-5">
       <div className="flex flex-col max-w-[960px] flex-1">
-        <InputSection isLoading={isLoading} onAnalyze={handleCodeChange} />
+        <InputSection
+          status={serviceAvailable}
+          isLoading={isLoading}
+          onAnalyze={handleCodeChange}
+        />
 
         <OutputSection
           isLoading={isLoading}
