@@ -14,14 +14,16 @@ export const ExplainPage = () => {
 
     console.log(res);
 
-    if (res) {
-      setServiceAvailable(res);
-    }
+    setServiceAvailable(res);
   };
 
   useEffect(() => {
     checkService();
   }, []);
+
+  useEffect(() => {
+    console.log("Service available:", serviceAvailable);
+  }, [serviceAvailable]);
 
   const explain = async (code: string) => {
     const explanation = await generateExplanation(code, false, "phi3");
