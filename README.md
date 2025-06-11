@@ -80,6 +80,6 @@ If you get an error, then it was not installed correctly.
 
 ## Showcase
 Local explain-my-code setup with running backend and Ollama server!
-[![Alt Text](./assets/image.png)](link_url)
-
+![Alt Text](./assets/image01.png)
+![Alt Text](./assets/image02.png)
 A live demo of the project (no AI features) can be found at: https://nikollbibajnoah.github.io/explain-my-code-app/
