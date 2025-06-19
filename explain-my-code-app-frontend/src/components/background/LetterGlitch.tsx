@@ -115,7 +115,7 @@ const LetterGlitch: React.FC<LetterGlitchProps> = ({
 
   const hexToRgb = (hex: string): RGB | null => {
     const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
-    hex = hex.replace(shorthandRegex, (m, r, g, b) => {
+    hex = hex.replace(shorthandRegex, (r, g, b) => {
       return r + r + g + g + b + b;
     });
 

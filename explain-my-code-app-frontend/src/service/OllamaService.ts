@@ -1,13 +1,16 @@
+import { ExplanationRequest, ExplanationResponse } from "../lib/types";
+import { LanguageDetectRequest } from "../lib/types/LanguageDetectRequest";
+import { LanguageDetectResponse } from "../lib/types/LanguageDetectResponse";
 import { axiosInstance } from "./AxiosInstance";
 
 const explainEndpoint = import.meta.env.VITE_EXPLAIN_ENDPOINT;
 const detectLanguageEndpoint = import.meta.env.VITE_DETECT_LANGUAGE_ENDPOINT;
 
-export const detectLanguage = async (prompt: string) => {
+export const detectLanguage = async (
+  prompt: LanguageDetectRequest
+): Promise<LanguageDetectResponse | undefined> => {
   try {
-    const response = await axiosInstance.post(detectLanguageEndpoint, {
-      prompt: prompt,
-    });
+    const response = await axiosInstance.post(detectLanguageEndpoint, prompt);
 
     if (response.status !== 200) {
       throw new Error("Request failed with status: " + response.status);
@@ -21,16 +24,10 @@ export const detectLanguage = async (prompt: string) => {
 };
 
 export const generateExplanation = async (
-  prompt: string,
-  stream: boolean,
-  model: string
-) => {
+  request: ExplanationRequest
+): Promise<ExplanationResponse | undefined> => {
   try {
-    const response = await axiosInstance.post(explainEndpoint, {
-      prompt: prompt,
-      stream: stream,
-      model: model,
-    });
+    const response = await axiosInstance.post(explainEndpoint, request);
 
     if (response.status !== 200) {
       throw new Error("Request failed with status: " + response.status);

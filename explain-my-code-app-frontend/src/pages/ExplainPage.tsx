@@ -26,7 +26,11 @@ export const ExplainPage = () => {
   }, [serviceAvailable]);
 
   const explain = async (code: string) => {
-    const explanation = await generateExplanation(code, false, "phi3");
+    const explanation = await generateExplanation({
+      prompt: code,
+      stream: false,
+      model: "phi-3",
+    });
 
     // Clear previous output
     setOutput(undefined);
@@ -39,13 +43,15 @@ export const ExplainPage = () => {
   };
 
   const detect = async (prompt: string) => {
-    const language = await detectLanguage(prompt);
+    const language = await detectLanguage({
+      prompt: prompt,
+    });
 
     // Clear previous language
     setLanguage(undefined);
 
     if (language) {
-      setLanguage(language.output);
+      setLanguage(language.language);
     }
   };
 

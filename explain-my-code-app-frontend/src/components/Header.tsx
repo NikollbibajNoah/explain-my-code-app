@@ -3,14 +3,17 @@ import { useNavigate } from "react-router-dom";
 export const Header = () => {
   const navigate = useNavigate();
 
+  // Handlers for navigation
   const handleTitleClick = () => {
     navigate("/");
   };
 
+  // Navigate to the explanation page
   const handleNewExplanation = () => {
     navigate("/explain");
   };
 
+  // Navigate to the about page
   const handleAboutClick = () => {
     navigate("/about");
   };

@@ -3,10 +3,12 @@ import { useNavigate } from "react-router-dom";
 export const HomePage = () => {
   const navigate = useNavigate();
 
+  // Navigate to the explanation page
   const handleNewExplanation = () => {
     navigate("/explain");
   };
 
+  // Navigate to the about page
   const handleAboutClick = () => {
     navigate("/about");
   };
